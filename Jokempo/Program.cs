@@ -1,61 +1,44 @@
-﻿// See https://aka.ms/new-console-template for more information
 using System;
+using System.Collections.Generic;
 
-Console.OutputEncoding = System.Text.Encoding.UTF8;
+var jogadores = new Dictionary<string, (int v, int e, int d)>();
+string[] opcoes = { "Pedra ✊", "Papel ✋", "Tesoura ✌" };
 
-Console.WriteLine("😀 Olá! Vamos jogar Jokempo?");
-Console.WriteLine("1 - Sim ou 0 - Não");
+Console.WriteLine("😀 Jokempo! 1-Sim / 0-Não");
+if (Console.ReadKey().KeyChar == '0') return;
 
-var continuar = Console.ReadKey().KeyChar;
-
-while(continuar == '1')
+while (true)
 {
-    Console.WriteLine("Então vamos começar...");
-    Console.WriteLine("Escolha uma opção: 0 - Pedra ✊, 1 - Papel ✋ ou 2 - Tesoura ✌");
-    var opcao = Console.ReadKey().KeyChar;
+    Console.WriteLine("\nQual seu nome?");
+    string nome = Console.ReadLine() ?? "Jogador";
+    if (!jogadores.ContainsKey(nome)) jogadores[nome] = (0, 0, 0);
 
-    var opcaoPC = new Random().Next(3);
+    do {
+        Console.WriteLine("\n0-Pedra, 1-Papel, 2-Tesoura");
+        int player = int.Parse(Console.ReadKey().KeyChar.ToString());
+        int pc = new Random().Next(3);
 
-    bool vitoria = false;
+        Console.WriteLine($"\nVocê: {opcoes[player]} vs PC: {opcoes[pc]}");
 
-    switch (opcao)
-    {
-        case '0':
-            Console.WriteLine("\nVocê escoheu Pedra ✊!");
-            vitoria = (opcaoPC == 2);
-            break;
-        case '1':
-            Console.WriteLine("\nVocê escoheu Papel ✋");
-            vitoria = (opcaoPC == 0);
-            break;
-        case '2':
-            Console.WriteLine("\nVocê escoheu Tesoura ✌");
-            vitoria = (opcaoPC == 1);
-            break;
-    }
+        var stats = jogadores[nome];
+        if (player == pc) {
+            Console.WriteLine("Empate!");
+            jogadores[nome] = (stats.v, stats.e + 1, stats.d);
+        } else if ((player == 0 && pc == 2) || (player == 1 && pc == 0) || (player == 2 && pc == 1)) {
+            Console.WriteLine("Você venceu!");
+            jogadores[nome] = (stats.v + 1, stats.e, stats.d);
+        } else {
+            Console.WriteLine("PC venceu!");
+            jogadores[nome] = (stats.v, stats.e, stats.d + 1);
+        }
 
-    switch (opcaoPC)
-    {
-        case 0:
-            Console.WriteLine("\nEu escolhi Pedra ✊!");
-            break;
-        case 1:
-            Console.WriteLine("\nEu escolhi Papel ✋");
-            break;
-        case 2:
-            Console.WriteLine("\nEu escolhi Tesoura ✌");
-            break;
-    }
+        Console.WriteLine("Jogar de novo? (1-Sim/Outro-Não)");
+    } while (Console.ReadKey().KeyChar == '1');
 
-    if (int.Parse(opcao.ToString()) == opcaoPC)
-        Console.WriteLine("\n😀 Legal! Nós empatamos!");
-    else if (vitoria)
-        Console.WriteLine("\n😀 Parabéns! Você venceu.");
-    else
-        Console.WriteLine("\n😀 Haha, eu venci! Não foi dessa vez. Você pode ter mais sorte na próxima.");
+    Console.WriteLine("\n--- Placar Geral ---");
+    foreach (var j in jogadores) 
+        Console.WriteLine($"{j.Key}: V:{j.Value.v} E:{j.Value.e} D:{j.Value.d}");
 
-    Console.WriteLine("\nQuer jogar de novo?");
-    Console.WriteLine("1 - Sim ou 0 - Não");
-    continuar = Console.ReadKey().KeyChar;
+    Console.WriteLine("\n1-Trocar Jogador, 0-Sair");
+    if (Console.ReadKey().KeyChar == '0') break;
 }
-Console.WriteLine("👋 Tchau! Até a próxima");
