@@ -1,5 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
+
+Console.OutputEncoding = Encoding.UTF8;
+Console.InputEncoding = Encoding.UTF8;
 
 var jogadores = new Dictionary<string, (int v, int e, int d)>();
 string[] opcoes = { "Pedra ✊", "Papel ✋", "Tesoura ✌" };
